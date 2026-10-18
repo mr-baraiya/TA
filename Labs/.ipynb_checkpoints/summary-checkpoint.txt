@@ -1,4 +1,0 @@
-Customer Purchase Summary:
-CustomerID: C101, Purchases (Unique): [400.0, 250.0], Average: 325.0
-CustomerID: C102, Purchases (Unique): [300.0], Average: 300.0
-CustomerID: C103, Purchases (Unique): [250.0, 150.0], Average: 200.0
