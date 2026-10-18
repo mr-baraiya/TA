@@ -1,80 +1,76 @@
 // Write a program to implement the solution to producer consumer problem in Java. [B]
 
-import java.util.LinkedList;
-
 class Buffer {
-    private final LinkedList<Integer> list = new LinkedList<>();
-    private final int capacity = 5;
+    int[] arr = new int[5];
+    int count = 0, in = 0, out = 0;
 
-    public synchronized void produce(int value) throws InterruptedException {
-        while (list.size() == capacity) {
-            System.out.println("Buffer full. Producer waiting...");
+    synchronized void produce(int value) throws InterruptedException {
+        while (count == 5)
             wait();
-        }
-        list.add(value);
-        System.out.println("Produced: " + value + " | Buffer size: " + list.size());
-        notifyAll();
+
+        arr[in] = value;
+        in = (in + 1) % 5;
+        count++;
+
+        System.out.println("Produced: " + value);
+        notify();
     }
 
-    public synchronized void consume() throws InterruptedException {
-        while (list.isEmpty()) {
-            System.out.println("Buffer empty. Consumer waiting...");
+    synchronized void consume() throws InterruptedException {
+        while (count == 0)
             wait();
-        }
-        int value = list.removeFirst();
-        System.out.println("Consumed: " + value + " | Buffer size: " + list.size());
-        notifyAll();
+
+        int value = arr[out];
+        out = (out + 1) % 5;
+        count--;
+
+        System.out.println("Consumed: " + value);
+        notify();
     }
 }
 
-class Producer implements Runnable {
-    private final Buffer buffer;
+class Producer extends Thread {
+    Buffer b;
 
-    public Producer(Buffer buffer) {
-        this.buffer = buffer;
+    Producer(Buffer b) {
+        this.b = b;
     }
 
-    @Override
     public void run() {
         try {
-            for (int i = 1; i <= 10; i++) {
-                buffer.produce(i);
-                Thread.sleep(300);
-            }
+            for (int i = 1; i <= 5; i++)
+                b.produce(i);
         } catch (InterruptedException e) {
-            System.out.println("Producer interrupted.");
+            System.out.println(e);
         }
     }
 }
 
-class Consumer implements Runnable {
-    private final Buffer buffer;
+class Consumer extends Thread {
+    Buffer b;
 
-    public Consumer(Buffer buffer) {
-        this.buffer = buffer;
+    Consumer(Buffer b) {
+        this.b = b;
     }
 
-    @Override
     public void run() {
         try {
-            for (int i = 1; i <= 10; i++) {
-                buffer.consume();
-                Thread.sleep(500);
-            }
+            for (int i = 1; i <= 5; i++)
+                b.consume();
         } catch (InterruptedException e) {
-            System.out.println("Consumer interrupted.");
+            System.out.println(e);
         }
     }
 }
 
 public class Program4 {
     public static void main(String[] args) {
-        Buffer buffer = new Buffer();
-        Thread producerThread = new Thread(new Producer(buffer));
-        Thread consumerThread = new Thread(new Consumer(buffer));
+        Buffer b = new Buffer();
 
-        System.out.println("Starting Producer-Consumer Demo...");
-        producerThread.start();
-        consumerThread.start();
+        Producer p = new Producer(b);
+        Consumer c = new Consumer(b);
+
+        p.start();
+        c.start();
     }
 }

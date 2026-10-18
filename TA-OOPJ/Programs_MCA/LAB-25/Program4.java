@@ -14,7 +14,6 @@ public class Program4 {
         double exp = 8.0;
         double powerResult = pow(base, exp);
 
-        System.out.println("=== Scientific Calculator (Static Import Math.*) ===");
         System.out.printf("Area of Circle with radius %.2f: %.2f (using PI & pow)%n", radius, area);
         System.out.printf("Square root of %.2f: %.2f (using sqrt)%n", number, squareRoot);
         System.out.printf("%.2f ^ %.2f: %.2f (using pow)%n", base, exp, powerResult);
