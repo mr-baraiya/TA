@@ -4,39 +4,44 @@ import java.io.*;
 
 public class Program1 {
     public static void main(String[] args) {
-        File file1 = new File("file1.txt");
-        File file2 = new File("file2.txt");
-
-        // Write sample data to file1 if it does not exist
-        try (FileWriter fw = new FileWriter(file1)) {
-            fw.write("Java is awesome. Java is robust and Java is popular.\n");
-        } catch (IOException e) {
-            System.out.println("Error initializing file: " + e.getMessage());
-        }
-
-        String word1 = "Java";
-        String word2 = "Python";
-        int replacements = 0;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file1));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(file2))) {
-
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("file1.txt"));
+            StringBuilder data = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
-                // Count occurrences
-                int index = 0;
-                while ((index = line.indexOf(word1, index)) != -1) {
-                    replacements++;
-                    index += word1.length();
+
+            do {
+                line = br.readLine();
+                if (line != null) {
+                    data.append(line).append("\n");
                 }
-                String modifiedLine = line.replace(word1, word2);
-                writer.write(modifiedLine);
-                writer.newLine();
-            }
-            System.out.println("Replaced '" + word1 + "' with '" + word2 + "' from file1 to file2.");
-            System.out.println("Total replacements: " + replacements);
+            } while (line != null);
+            br.close();
+
+            System.out.println("data :" + data.toString());
+
+            String text = data.toString();
+            int count = 0;
+            int index = 0;
+
+            do {
+                index = text.indexOf("word1", index);
+
+                if (index != -1) {
+                    count++;
+                    index += 5;
+                }
+            } while (index != -1);
+
+            text = text.replace("word1", "word2");
+
+            FileWriter fw = new FileWriter("file2.txt");
+            fw.write(text);
+            fw.close();
+
+            System.out.println("Number of replacements: " + count);
+            System.out.println("Updated content written to file2.txt");
         } catch (IOException e) {
-            System.out.println("File Error: " + e.getMessage());
+            System.out.println(e);
         }
     }
 }

@@ -6,7 +6,11 @@ class Buffer {
 
     public synchronized void produce(int val) {
         while (available) {
-            try { wait(); } catch (InterruptedException e) {}
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                System.out.println("Producer interrupted");
+            }
         }
         data = val;
         available = true;
@@ -16,7 +20,11 @@ class Buffer {
 
     public synchronized int consume() {
         while (!available) {
-            try { wait(); } catch (InterruptedException e) {}
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                System.out.println("Consumer interrupted");
+            }
         }
         available = false;
         System.out.println("Consumed: " + data);
@@ -27,26 +35,40 @@ class Buffer {
 
 class Producer extends Thread {
     private Buffer buffer;
-    public Producer(Buffer b) { this.buffer = b; }
+
+    public Producer(Buffer b) {
+        this.buffer = b;
+    }
 
     @Override
     public void run() {
         for (int i = 1; i <= 5; i++) {
             buffer.produce(i * 10);
-            try { Thread.sleep(200); } catch (InterruptedException e) {}
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("Producer interrupted");
+            }
         }
     }
 }
 
 class Consumer extends Thread {
     private Buffer buffer;
-    public Consumer(Buffer b) { this.buffer = b; }
+
+    public Consumer(Buffer b) {
+        this.buffer = b;
+    }
 
     @Override
     public void run() {
         for (int i = 1; i <= 5; i++) {
             buffer.consume();
-            try { Thread.sleep(300); } catch (InterruptedException e) {}
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("Consumer interrupted");
+            }
         }
     }
 }

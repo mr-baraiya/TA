@@ -38,8 +38,10 @@ class Producer extends Thread {
 
     public void run() {
         try {
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 5; i++){
                 b.produce(i);
+                Thread.sleep(500);
+            }
         } catch (InterruptedException e) {
             System.out.println(e);
         }
@@ -55,8 +57,10 @@ class Consumer extends Thread {
 
     public void run() {
         try {
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 5; i++){
                 b.consume();
+                Thread.sleep(2000);
+            }
         } catch (InterruptedException e) {
             System.out.println(e);
         }
@@ -68,9 +72,11 @@ public class Program4 {
         Buffer b = new Buffer();
 
         Producer p = new Producer(b);
-        Consumer c = new Consumer(b);
+        Consumer c1 = new Consumer(b);
+        Consumer c2 = new Consumer(b);
 
         p.start();
-        c.start();
+        c1.start();
+        c2.start();
     }
 }

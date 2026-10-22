@@ -1,0 +1,3 @@
+
+word1 is replaced by word2.
+word1 appears again in this file.

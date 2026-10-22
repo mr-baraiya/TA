@@ -2,58 +2,58 @@
 
 import java.util.Random;
 
-class NumberProcessor {
-    private int number;
-    private boolean generated = false;
-    private boolean finished = false;
+class Square extends Thread {
+    int n;
 
-    public synchronized void putNumber(int n) {
-        this.number = n;
-        this.generated = true;
-        notifyAll();
+    Square(int n) {
+        this.n = n;
     }
 
-    public synchronized int getNumberForSquare() {
-        while (!generated || (number % 2 != 0)) {
-            if (finished) return -1;
-            try { wait(); } catch (InterruptedException e) {}
+    public void run() {
+        System.out.println("Square: " + (n * n));
+    }
+}
+
+class Cube extends Thread {
+    int n;
+
+    Cube(int n) {
+        this.n = n;
+    }
+
+    public void run() {
+        System.out.println("Cube: " + (n * n * n));
+    }
+}
+
+class RandomNumber extends Thread {
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            Random r = new Random();
+            int n = r.nextInt(100);
+
+            System.out.println("Random Number: " + n);
+
+            if (n % 2 == 0) {
+                Square t2 = new Square(n);
+                t2.start();
+            } else {
+                Cube t3 = new Cube(n);
+                t3.start();
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
-        generated = false;
-        return number;
-    }
-
-    public synchronized int getNumberForCube() {
-        while (!generated || (number % 2 == 0)) {
-            if (finished) return -1;
-            try { wait(); } catch (InterruptedException e) {}
-        }
-        generated = false;
-        return number;
-    }
-
-    public synchronized void finish() {
-        finished = true;
-        notifyAll();
     }
 }
 
 public class Program3 {
     public static void main(String[] args) {
-        Random rand = new Random();
-
-        Thread generator = new Thread(() -> {
-            for (int i = 0; i < 5; i++) {
-                int val = rand.nextInt(50) + 1;
-                System.out.println("\n[Generator] Generated: " + val);
-                if (val % 2 == 0) {
-                    System.out.println("[Even Thread] Square of " + val + " = " + (val * val));
-                } else {
-                    System.out.println("[Odd Thread]  Cube of " + val + " = " + (val * val * val));
-                }
-                try { Thread.sleep(1000); } catch (InterruptedException e) {}
-            }
-        });
-
-        generator.start();
+        RandomNumber t1 = new RandomNumber();
+        t1.start();
     }
 }
